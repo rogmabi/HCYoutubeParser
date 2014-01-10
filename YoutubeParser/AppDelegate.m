@@ -25,7 +25,12 @@
     
     MPMoviePlayerViewController *mp = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL URLWithString:[videos objectForKey:@"medium"]]];
     */
-    self.window.rootViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
+    if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ) {
+        self.window.rootViewController = [[ViewController alloc] initWithNibName:@"ViewController_iPad" bundle:nil];
+    }
+    else {
+        self.window.rootViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
+    }
     
     return YES;
 }
