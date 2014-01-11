@@ -20,6 +20,8 @@
 		ED1A938B1880B73100E6669B /* UIImage+YSImage.m in Sources */ = {isa = PBXBuildFile; fileRef = ED1A938A1880B73100E6669B /* UIImage+YSImage.m */; };
 		ED1A938D1880B79D00E6669B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED1A938C1880B79D00E6669B /* AVFoundation.framework */; };
 		ED1A938F1880B7A200E6669B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED1A938E1880B7A200E6669B /* CoreMedia.framework */; };
+		ED1A93A21881234700E6669B /* placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = ED1A93A01881234700E6669B /* placeholder.png */; };
+		ED1A93A31881234700E6669B /* placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ED1A93A11881234700E6669B /* placeholder@2x.png */; };
 		F449DE29160E5651001BADA4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F449DE27160E5651001BADA4 /* ViewController.m */; };
 		F449DE2A160E5651001BADA4 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F449DE28160E5651001BADA4 /* ViewController.xib */; };
 		F449DE2F160E68F9001BADA4 /* button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F449DE2C160E68F9001BADA4 /* button@2x.png */; };
@@ -56,6 +58,8 @@
 		ED1A938A1880B73100E6669B /* UIImage+YSImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+YSImage.m"; sourceTree = "<group>"; };
 		ED1A938C1880B79D00E6669B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		ED1A938E1880B7A200E6669B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		ED1A93A01881234700E6669B /* placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = placeholder.png; sourceTree = "<group>"; };
+		ED1A93A11881234700E6669B /* placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "placeholder@2x.png"; sourceTree = "<group>"; };
 		F449DE26160E5651001BADA4 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		F449DE27160E5651001BADA4 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		F449DE28160E5651001BADA4 /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
@@ -94,6 +98,7 @@
 		3285C472157CEFFA00096202 = {
 			isa = PBXGroup;
 			children = (
+				ED1A93A41881239C00E6669B /* Vendor */,
 				3285C487157CEFFB00096202 /* YoutubeParser */,
 				F4B544EE160E4CA2009EB35F /* Resources */,
 				3285C480157CEFFB00096202 /* Frameworks */,
@@ -161,9 +166,18 @@
 			path = Classes;
 			sourceTree = "<group>";
 		};
+		ED1A93A41881239C00E6669B /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Vendor;
+			sourceTree = "<group>";
+		};
 		F449DE2B160E68F9001BADA4 /* Graphics */ = {
 			isa = PBXGroup;
 			children = (
+				ED1A93A01881234700E6669B /* placeholder.png */,
+				ED1A93A11881234700E6669B /* placeholder@2x.png */,
 				F449DE3A160E736C001BADA4 /* play_button.png */,
 				F449DE3B160E736C001BADA4 /* play_button@2x.png */,
 				F449DE32160E698E001BADA4 /* button.png */,
@@ -242,8 +256,10 @@
 				3285C48C157CEFFB00096202 /* InfoPlist.strings in Resources */,
 				F4B544F2160E4CA2009EB35F /* Default-568h@2x.png in Resources */,
 				F4B544F3160E4CA2009EB35F /* Default.png in Resources */,
+				ED1A93A31881234700E6669B /* placeholder@2x.png in Resources */,
 				F4B544F4160E4CA2009EB35F /* Default@2x.png in Resources */,
 				F449DE2A160E5651001BADA4 /* ViewController.xib in Resources */,
+				ED1A93A21881234700E6669B /* placeholder.png in Resources */,
 				F449DE2F160E68F9001BADA4 /* button@2x.png in Resources */,
 				ED1A93851880974000E6669B /* Images.xcassets in Resources */,
 				F449DE30160E68F9001BADA4 /* inner_shadow@2x.png in Resources */,

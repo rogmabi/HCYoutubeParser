@@ -166,7 +166,7 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
     
     if (dirContents) {
         for (NSString *path in dirContents) {
-            [self.downloadedVideoPaths addObject:path];
+            [self.downloadedVideoPaths insertObject:path atIndex:0];
         }
     }
     
@@ -409,11 +409,14 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
     cell.textLabel.text = videoName.lastPathComponent;
     cell.detailTextLabel.text = @"Tap to Open In...";
     NSString *videoPath = [self videoPathForVideoName:videoName];
+    cell.imageView.image = [UIImage imageNamed:@"placeholder"];
     
     [UIImage videoThumbFromVideoPath:videoPath completion:^(UIImage *thumb) {
         if (thumb) {
-            cell.imageView.image = thumb;
-            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+//            dispatch_async(dispatch_get_main_queue(), ^{
+                cell.imageView.image = thumb;
+                [cell setNeedsDisplay];
+//            });
         }
     }];
     
