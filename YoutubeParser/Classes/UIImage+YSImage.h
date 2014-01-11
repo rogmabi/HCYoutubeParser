@@ -13,7 +13,7 @@
 + (UIImage*)imageFromView:(UIView*)view scaledToSize:(CGSize)newSize;
 + (UIImage*)imageWithImage:(UIImage*)image scaledToSize:(CGSize)newSize;
 + (UIImage *)imageWithImage:(UIImage *)image scaledToMaxWidth:(CGFloat)width maxHeight:(CGFloat)height doubleRetina:(BOOL)doubleRetina;
-+ (UIImage *)videoThumbFromVideoPath:(NSString *)videoPath;
++ (void)videoThumbFromVideoPath:(NSString *)videoPath completion:(void (^)(UIImage *result))callback;
 /**
  
  */

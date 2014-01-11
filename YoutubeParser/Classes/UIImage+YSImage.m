@@ -13,7 +13,7 @@
 
 @implementation UIImage (YSImage)
 
-+ (UIImage *)videoThumbFromVideoPath:(NSString *)videoPath {
++ (void)videoThumbFromVideoPath:(NSString *)videoPath completion:(void (^)(UIImage *result))callback {
     NSString *fullVideoPath = videoPath;
     NSURL *sourceURL = [NSURL fileURLWithPath:fullVideoPath];
     AVAsset *asset = [AVAsset assetWithURL:sourceURL];
@@ -31,7 +31,7 @@
     UIImage *thumbnail = [UIImage imageWithCGImage:imageRef];
     thumbnail = [thumbnail imageByScalingAndCroppingForSize:CGSizeMake(88, 88)];
     CGImageRelease(imageRef);  // CGImageRef won't be released by ARC
-    return thumbnail;
+    callback(thumbnail);
 }
 
 + (void)beginImageContextWithSize:(CGSize)size

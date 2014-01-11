@@ -165,7 +165,9 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
     dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:videoDirectory error:&error];
     
     if (dirContents) {
-        self.downloadedVideoPaths = [dirContents mutableCopy];
+        for (NSString *path in dirContents) {
+            [self.downloadedVideoPaths addObject:path];
+        }
     }
     
     [self.tableView reloadData];
@@ -245,7 +247,8 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
     }
     progress.hidden = YES;
     
-    [self.downloadedVideoPaths addObject:path];
+    // on top
+    [self.downloadedVideoPaths insertObject:path atIndex:0];
     [self.tableView reloadData];
 }
 
@@ -406,7 +409,14 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
     cell.textLabel.text = videoName.lastPathComponent;
     cell.detailTextLabel.text = @"Tap to Open In...";
     NSString *videoPath = [self videoPathForVideoName:videoName];
-    cell.imageView.image = [UIImage videoThumbFromVideoPath:videoPath];
+    
+    [UIImage videoThumbFromVideoPath:videoPath completion:^(UIImage *thumb) {
+        if (thumb) {
+            cell.imageView.image = thumb;
+            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        }
+    }];
+    
     [cell setAccessoryType:UITableViewCellAccessoryDetailButton];
     
     return cell;
