@@ -13,6 +13,8 @@
 #import <CoreMedia/CoreMedia.h>
 #import <AVFoundation/AVFoundation.h>
 #import "UIImage+YSImage.h"
+#import "TMCache.h"
+#import "LBYouTubeExtractor.h"
 
 typedef void(^DrawRectBlock)(CGRect rect);
 
@@ -59,7 +61,7 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
 
 @end
 
-@interface ViewController () <UIActionSheetDelegate, UITableViewDataSource, UITableViewDelegate, UIDocumentInteractionControllerDelegate> {
+@interface ViewController () <UIActionSheetDelegate, UITableViewDataSource, UITableViewDelegate, UIDocumentInteractionControllerDelegate, LBYouTubeExtractorDelegate> {
     NSDictionary *currentVideoDictionary;
 }
 
@@ -81,7 +83,6 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
     NSURL *_urlToLoad;
     NSMutableData *receivedData;
     long long expectedBytes;
-    BOOL justLoaded;
 }
 
 @synthesize progress, dic;
@@ -89,28 +90,22 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
 #pragma mark
 #pragma mark View Load / Appear
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
+    [_playButton setImage:[UIImage imageNamed:@"play_button"] forState:UIControlStateNormal];
     [_submitButton addTarget:self action:@selector(submitYouTubeURL:) forControlEvents:UIControlEventTouchUpInside];
-    [_playButton addTarget:self action:@selector(showActionSheet:) forControlEvents:UIControlEventTouchUpInside];
+    [_playButton addTarget:self action:@selector(playVideo:) forControlEvents:UIControlEventTouchUpInside];
+    
+    if (!_urlToLoad) {
+        _playButton.hidden = YES;
+    }
     
     self.progress.hidden = YES;
     
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    
-    justLoaded = YES;
     
     [self registerNotifications];
 }
@@ -197,6 +192,8 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
 #pragma mark
 #pragma mark Downloading
 -(void)startDownload {
+    // reset the pasteboard
+    [[UIPasteboard generalPasteboard] setValue:@"" forPasteboardType:UIPasteboardNameGeneral];
     NSURL *url = _urlToLoad;
     NSURLRequest *theRequest = [NSURLRequest requestWithURL:url
                                                 cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
@@ -248,10 +245,13 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
     progress.hidden = YES;
     
     // on top
-    [self.downloadedVideoPaths insertObject:path atIndex:0];
+    [self.downloadedVideoPaths insertObject:path.lastPathComponent atIndex:0];
     [self.tableView reloadData];
+    
+    _urlToLoad = [NSURL fileURLWithPath:path];
 }
 
+#pragma mark
 #pragma mark Youtube
 
 - (NSString *)videoDirectory {
@@ -273,7 +273,7 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
         [_urlTextField resignFirstResponder];
     }
     _urlToLoad = nil;
-    [_playButton setImage:nil forState:UIControlStateNormal];
+    [_playButton setHidden:YES];
     
     NSURL *url = [NSURL URLWithString:_urlTextField.text];
     
@@ -283,37 +283,61 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
         return;
     }
     
-    
     _activityIndicator.hidden = NO;
     [HCYoutubeParser thumbnailForYoutubeURL:url thumbnailSize:YouTubeThumbnailDefaultHighQuality completeBlock:^(UIImage *image, NSError *error) {
         
         if (!error) {
-            
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.posterIV setImage:image];
-                [self.posterIV setContentMode:UIViewContentModeScaleAspectFit];
+                self.posterIV.image = image;
             });
-            
-            [HCYoutubeParser h264videosWithYoutubeURL:url completeBlock:^(NSDictionary *videoDictionary, NSError *error) {
-                
-                _playButton.hidden = NO;
-                _activityIndicator.hidden = YES;
-                
-                currentVideoDictionary = videoDictionary;
-                
-                NSLog(@"Video Dictionary is\n\n%@", videoDictionary);
-                
-                UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Chose the quality" delegate:self cancelButtonTitle:@"Ok" destructiveButtonTitle:nil otherButtonTitles:@"High (1080p)", @"High (720p)", @"Medium", @"Small", nil];
-                as.tag = kASTagQuality;
-                [as showInView:self.view];
-                
-            }];
         }
         else {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
             [alert show];
         }
+        
+        [self videoURLForYoutubeURL:url];
     }];
+}
+
+- (void)videoURLForYoutubeURL:(NSURL *)url {
+    [HCYoutubeParser h264videosWithYoutubeURL:url completeBlock:^(NSDictionary *videoDictionary, NSError *error) {
+        
+        if (!error && videoDictionary) {
+            currentVideoDictionary = videoDictionary;
+            [self askQualityForVideo];
+        }
+        else {
+            NSLog(@"Error with Youtube API: %@\n\nGoing to extract the URL instead...", [error localizedDescription]);
+            [self extractVideoURL];
+        }
+        
+    }];
+}
+
+- (void)askQualityForVideo {
+    if (!currentVideoDictionary) {
+        NSLog(@"Nothing to show");
+        self.posterIV.hidden = YES;
+        self.playButton.hidden = YES;
+        self.activityIndicator.hidden = YES;
+        return;
+    }
+    
+    _activityIndicator.hidden = YES;
+    
+    NSLog(@"Video Dictionary is\n\n%@", currentVideoDictionary);
+    
+    UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Chose the quality to download" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"High (1080p or 720p)", @"Medium", @"Small", nil];
+    as.tag = kASTagQuality;
+    [as showInView:self.view];
+}
+
+- (void)extractVideoURL {
+    NSURL *url = [NSURL URLWithString:_urlTextField.text];
+    LBYouTubeExtractor* extractor = [[LBYouTubeExtractor alloc] initWithURL:url quality:LBYouTubeVideoQualityLarge];
+    extractor.delegate = self;
+    [extractor startExtracting];
 }
 
 - (void)playVideo:(NSDictionary *)videoDictionary quality:(NSString *)quality {
@@ -324,9 +348,6 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
     if ([qualities objectForKey:quality] != nil) {
         URLString = [qualities objectForKey:quality];
         _urlToLoad = [NSURL URLWithString:URLString];
-        
-        [_playButton setImage:[UIImage imageNamed:@"play_button"] forState:UIControlStateNormal];
-        
     }
     else {
         [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Couldn't find youtube video" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil] show];
@@ -338,7 +359,14 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
     NSURL *sourceURL = [NSURL fileURLWithPath:fullVideoPath];
     AVAsset *asset = [AVAsset assetWithURL:sourceURL];
     AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc]initWithAsset:asset];
-    CMTime thumbnailTime = CMTimeMake(1, 1);
+    Float64 durationSeconds = CMTimeGetSeconds([asset duration]);
+    CMTime thumbnailTime;
+    if (durationSeconds >= 2) {
+        thumbnailTime = CMTimeMakeWithSeconds(2, 600);
+    }
+    else {
+        thumbnailTime = kCMTimeZero;
+    }
     CGImageRef imageRef = [imageGenerator copyCGImageAtTime:thumbnailTime actualTime:NULL error:NULL];
     UIImage *thumbnail = [UIImage imageWithCGImage:imageRef];
     thumbnail = [thumbnail imageByScalingAndCroppingForSize:CGSizeMake(88, 88)];
@@ -347,7 +375,38 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
 }
 
 #pragma mark
+#pragma mark LBYouTubeExtractorDelegate
+
+-(void)youTubeExtractor:(LBYouTubeExtractor *)extractor didSuccessfullyExtractYouTubeURL:(NSURL *)videoURL {
+    if (videoURL) _urlToLoad = [videoURL copy];
+    [self cleanURL];
+    NSLog(@"extracted videoURL is %@", _urlToLoad);
+    [_playButton setHidden:NO];
+    _activityIndicator.hidden = YES;
+    [_playButton setImage:[UIImage imageNamed:@"play_button"] forState:UIControlStateNormal];
+    
+    [self startDownload];
+}
+
+- (void)cleanURL {
+    NSString *url = _urlToLoad.absoluteString;
+    url = [url stringByReplacingOccurrencesOfString:@"%3A" withString:@":"];
+    url = [url stringByReplacingOccurrencesOfString:@"%2F" withString:@"//"];
+    _urlToLoad = [NSURL URLWithString:url];
+}
+
+-(void)youTubeExtractor:(LBYouTubeExtractor *)extractor failedExtractingYouTubeURLWithError:(NSError *)error {
+    _urlToLoad = nil;
+    [_playButton setHidden:YES];
+    _activityIndicator.hidden = YES;
+    
+    UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Couldn't find a working URL.\nBetter chance next time!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    [av show];
+}
+
+#pragma mark
 #pragma mark UIActionSheetDelegate
+
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if (actionSheet.tag == kASTagQuality) {
@@ -356,18 +415,25 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
             if ([currentVideoDictionary objectForKey:@"hd1080"]) {
                 [self playVideo:currentVideoDictionary quality:@"hd1080"];
             }
-            else {
+            else if ([currentVideoDictionary objectForKey:@"hd720"]) {
                 [self playVideo:currentVideoDictionary quality:@"hd720"];
+            }
+            else {
+                [self playVideo:currentVideoDictionary quality:@"high"];
             }
         }
         else if (buttonIndex == actionSheet.firstOtherButtonIndex+1) {
-            [self playVideo:currentVideoDictionary quality:@"hd720"];
-        }
-        else if (buttonIndex == actionSheet.firstOtherButtonIndex+2) {
             [self playVideo:currentVideoDictionary quality:@"medium"];
         }
-        else {
+        else if (buttonIndex == actionSheet.firstOtherButtonIndex+2) {
             [self playVideo:currentVideoDictionary quality:@"small"];
+        }
+        
+        if (buttonIndex != actionSheet.cancelButtonIndex) {
+            if (currentVideoDictionary && _urlToLoad) {
+                [self startDownload];
+            }
+            _playButton.hidden = NO;
         }
     }
     else if(actionSheet.tag == kASTagAction) {
@@ -411,18 +477,46 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
     NSString *videoPath = [self videoPathForVideoName:videoName];
     cell.imageView.image = [UIImage imageNamed:@"placeholder"];
     
-    [UIImage videoThumbFromVideoPath:videoPath completion:^(UIImage *thumb) {
-        if (thumb) {
-//            dispatch_async(dispatch_get_main_queue(), ^{
-                cell.imageView.image = thumb;
-                [cell setNeedsDisplay];
-//            });
-        }
-    }];
+    UIImage *cachedThumb;
+    
+    if ( (cachedThumb = [[TMCache sharedCache] objectForKey:videoPath]) ) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            cell.imageView.image = cachedThumb;
+        });
+    }
+    else {
+        // create, set and cache
+        [UIImage videoThumbFromVideoPath:videoPath completion:^(UIImage *thumb) {
+            if (thumb) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    cell.imageView.image = thumb;
+                });
+                [[TMCache sharedCache] setObject:thumb forKey:videoPath];
+            }
+        }];
+    }
     
     [cell setAccessoryType:UITableViewCellAccessoryDetailButton];
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSString *path = [self videoPathForVideoName:[self.downloadedVideoPaths objectAtIndex:indexPath.row]];
+    NSError *error;
+    [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+    if (error) {
+        NSLog(@"Could not remove item at path %@.\n\nError is %@", path, [error localizedDescription]);
+    }
+    else {
+        if (indexPath.row <= self.downloadedVideoPaths.count) {
+            [self.downloadedVideoPaths removeObjectAtIndex:indexPath.row];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+        else {
+            NSLog(@"index out of bound! %d out of %d", indexPath.row, self.downloadedVideoPaths.count);
+        }
+    }
 }
 
 #pragma mark UITableViewDelegate

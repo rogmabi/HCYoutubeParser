@@ -9,6 +9,7 @@
             <connections>
                 <outlet property="activityIndicator" destination="26" id="29"/>
                 <outlet property="playButton" destination="32" id="33"/>
+                <outlet property="posterIV" destination="19" id="7tP-ZH-Uor"/>
                 <outlet property="progress" destination="hsH-PA-5QV" id="puD-8V-ztj"/>
                 <outlet property="submitButton" destination="25" id="27"/>
                 <outlet property="tableView" destination="22K-AW-kI4" id="EnE-oB-9g2"/>
@@ -25,15 +26,15 @@
                     <rect key="frame" x="0.0" y="20" width="320" height="180"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
-                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="inner_shadow.png" id="19">
-                            <rect key="frame" x="0.0" y="0.0" width="320" height="180"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                            <rect key="contentStretch" x="0.49999999999999961" y="0.0" width="0.0" height="1"/>
-                        </imageView>
                         <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" animating="YES" style="white" id="26">
                             <rect key="frame" x="151" y="79" width="20" height="20"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </activityIndicatorView>
+                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="19">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="180"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <rect key="contentStretch" x="0.49999999999999961" y="0.0" width="0.0" height="1"/>
+                        </imageView>
                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="32">
                             <rect key="frame" x="0.0" y="0.0" width="320" height="180"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -98,7 +99,6 @@
     </objects>
     <resources>
         <image name="button.png" width="83" height="47"/>
-        <image name="inner_shadow.png" width="15" height="180"/>
         <image name="textfield.png" width="220" height="47"/>
     </resources>
 </document>

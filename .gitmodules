@@ -1,0 +1,6 @@
+[submodule "YoutubeParser/Submodules/TMCache"]
+	path = YoutubeParser/Submodules/TMCache
+	url = https://github.com/tumblr/TMCache.git
+[submodule "YoutubeParser/Submodules/LBYouTubeView"]
+	path = YoutubeParser/Submodules/LBYouTubeView
+	url = https://github.com/MarcosSTM/LBYouTubeView.git

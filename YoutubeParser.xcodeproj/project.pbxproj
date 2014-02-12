@@ -22,6 +22,11 @@
 		ED1A938F1880B7A200E6669B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED1A938E1880B7A200E6669B /* CoreMedia.framework */; };
 		ED1A93A21881234700E6669B /* placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = ED1A93A01881234700E6669B /* placeholder.png */; };
 		ED1A93A31881234700E6669B /* placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ED1A93A11881234700E6669B /* placeholder@2x.png */; };
+		ED1A93AC1881242200E6669B /* TMCache.m in Sources */ = {isa = PBXBuildFile; fileRef = ED1A93A71881242200E6669B /* TMCache.m */; };
+		ED1A93AD1881242200E6669B /* TMDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = ED1A93A91881242200E6669B /* TMDiskCache.m */; };
+		ED1A93AE1881242200E6669B /* TMMemoryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = ED1A93AB1881242200E6669B /* TMMemoryCache.m */; };
+		EDBF53E718824F9800CEFDDF /* LBYouTubeExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = EDBF53E418824F9800CEFDDF /* LBYouTubeExtractor.m */; };
+		EDBF53E818824F9800CEFDDF /* LBYouTubePlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EDBF53E618824F9800CEFDDF /* LBYouTubePlayerViewController.m */; };
 		F449DE29160E5651001BADA4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F449DE27160E5651001BADA4 /* ViewController.m */; };
 		F449DE2A160E5651001BADA4 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F449DE28160E5651001BADA4 /* ViewController.xib */; };
 		F449DE2F160E68F9001BADA4 /* button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F449DE2C160E68F9001BADA4 /* button@2x.png */; };
@@ -60,6 +65,17 @@
 		ED1A938E1880B7A200E6669B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		ED1A93A01881234700E6669B /* placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = placeholder.png; sourceTree = "<group>"; };
 		ED1A93A11881234700E6669B /* placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "placeholder@2x.png"; sourceTree = "<group>"; };
+		ED1A93A61881242200E6669B /* TMCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMCache.h; sourceTree = "<group>"; };
+		ED1A93A71881242200E6669B /* TMCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMCache.m; sourceTree = "<group>"; };
+		ED1A93A81881242200E6669B /* TMDiskCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMDiskCache.h; sourceTree = "<group>"; };
+		ED1A93A91881242200E6669B /* TMDiskCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMDiskCache.m; sourceTree = "<group>"; };
+		ED1A93AA1881242200E6669B /* TMMemoryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMMemoryCache.h; sourceTree = "<group>"; };
+		ED1A93AB1881242200E6669B /* TMMemoryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMMemoryCache.m; sourceTree = "<group>"; };
+		EDBF53E218824F9800CEFDDF /* LBYouTube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LBYouTube.h; sourceTree = "<group>"; };
+		EDBF53E318824F9800CEFDDF /* LBYouTubeExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LBYouTubeExtractor.h; sourceTree = "<group>"; };
+		EDBF53E418824F9800CEFDDF /* LBYouTubeExtractor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LBYouTubeExtractor.m; sourceTree = "<group>"; };
+		EDBF53E518824F9800CEFDDF /* LBYouTubePlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LBYouTubePlayerViewController.h; sourceTree = "<group>"; };
+		EDBF53E618824F9800CEFDDF /* LBYouTubePlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LBYouTubePlayerViewController.m; sourceTree = "<group>"; };
 		F449DE26160E5651001BADA4 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		F449DE27160E5651001BADA4 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		F449DE28160E5651001BADA4 /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
@@ -169,8 +185,37 @@
 		ED1A93A41881239C00E6669B /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				EDBF53E118824F9800CEFDDF /* LBYouTubeView */,
+				ED1A93A51881242200E6669B /* TMCache */,
 			);
 			name = Vendor;
+			sourceTree = "<group>";
+		};
+		ED1A93A51881242200E6669B /* TMCache */ = {
+			isa = PBXGroup;
+			children = (
+				ED1A93A61881242200E6669B /* TMCache.h */,
+				ED1A93A71881242200E6669B /* TMCache.m */,
+				ED1A93A81881242200E6669B /* TMDiskCache.h */,
+				ED1A93A91881242200E6669B /* TMDiskCache.m */,
+				ED1A93AA1881242200E6669B /* TMMemoryCache.h */,
+				ED1A93AB1881242200E6669B /* TMMemoryCache.m */,
+			);
+			name = TMCache;
+			path = YoutubeParser/Submodules/TMCache/TMCache;
+			sourceTree = "<group>";
+		};
+		EDBF53E118824F9800CEFDDF /* LBYouTubeView */ = {
+			isa = PBXGroup;
+			children = (
+				EDBF53E218824F9800CEFDDF /* LBYouTube.h */,
+				EDBF53E318824F9800CEFDDF /* LBYouTubeExtractor.h */,
+				EDBF53E418824F9800CEFDDF /* LBYouTubeExtractor.m */,
+				EDBF53E518824F9800CEFDDF /* LBYouTubePlayerViewController.h */,
+				EDBF53E618824F9800CEFDDF /* LBYouTubePlayerViewController.m */,
+			);
+			name = LBYouTubeView;
+			path = YoutubeParser/Submodules/LBYouTubeView/LBYouTubeView;
 			sourceTree = "<group>";
 		};
 		F449DE2B160E68F9001BADA4 /* Graphics */ = {
@@ -230,6 +275,11 @@
 			attributes = {
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = Hiddencode.me;
+				TargetAttributes = {
+					3285C47C157CEFFB00096202 = {
+						DevelopmentTeam = YTCA6NQWL7;
+					};
+				};
 			};
 			buildConfigurationList = 3285C477157CEFFA00096202 /* Build configuration list for PBXProject "YoutubeParser" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -280,11 +330,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED1A93AE1881242200E6669B /* TMMemoryCache.m in Sources */,
 				3285C48E157CEFFB00096202 /* main.m in Sources */,
+				ED1A93AC1881242200E6669B /* TMCache.m in Sources */,
+				ED1A93AD1881242200E6669B /* TMDiskCache.m in Sources */,
+				EDBF53E718824F9800CEFDDF /* LBYouTubeExtractor.m in Sources */,
 				ED1A938B1880B73100E6669B /* UIImage+YSImage.m in Sources */,
 				3285C492157CEFFB00096202 /* AppDelegate.m in Sources */,
 				3285C49B157CF02700096202 /* HCYoutubeParser.m in Sources */,
 				F449DE29160E5651001BADA4 /* ViewController.m in Sources */,
+				EDBF53E818824F9800CEFDDF /* LBYouTubePlayerViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,11 +425,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "YoutubeParser/YoutubeParser-Prefix.pch";
 				INFOPLIST_FILE = "YoutubeParser/YoutubeParser-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "474B30EA-8A85-461E-AB21-82AD74AA6934";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -386,11 +443,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "YoutubeParser/YoutubeParser-Prefix.pch";
 				INFOPLIST_FILE = "YoutubeParser/YoutubeParser-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "474B30EA-8A85-461E-AB21-82AD74AA6934";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};

@@ -10,8 +10,9 @@
 
 #define kYoutubeInfoURL      @"http://www.youtube.com/get_video_info?video_id="
 #define kYoutubeThumbnailURL @"http://img.youtube.com/vi/%@/%@.jpg"
-#define kYoutubeDataURL      @"http://gdata.youtube.com/feeds/api/videos/%@?alt=json"
+#define kYoutubeDataURL      @"http://gdata.youtube.com/feeds/api/videos/%@?alt=json&key=%@"
 #define kUserAgent @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.79 Safari/537.4"
+#define kYoutubeDevKey @""
 
 @interface NSString (QueryString)
 
@@ -101,7 +102,7 @@
 
 + (NSDictionary *)h264videosWithYoutubeID:(NSString *)youtubeID {
     if (youtubeID) {
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kYoutubeInfoURL, youtubeID]];
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@&key=%@", kYoutubeInfoURL, youtubeID, kYoutubeDevKey]];
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
         [request setValue:kUserAgent forHTTPHeaderField:@"User-Agent"];
         [request setHTTPMethod:@"GET"];
@@ -264,7 +265,7 @@
     NSString *youtubeID = [self youtubeIDFromYoutubeURL:youtubeURL];
     if (youtubeID)
     {
-        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:kYoutubeDataURL, youtubeID]]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:kYoutubeDataURL, youtubeID, kYoutubeDevKey]]];
 
         NSOperationQueue *queue = [[NSOperationQueue alloc] init];
         [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
