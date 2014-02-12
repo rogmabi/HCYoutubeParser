@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import "ViewController.h"
 
+#import "TestFlight.h"
+
 @implementation AppDelegate
 
 @synthesize window = _window;
@@ -31,6 +33,8 @@
     else {
         self.window.rootViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
     }
+    
+    [TestFlight takeOff:@"ec75aed3-b812-4b5f-b003-adc8be132269"];
     
     return YES;
 }
