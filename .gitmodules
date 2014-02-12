@@ -4,6 +4,3 @@
 [submodule "YoutubeParser/Submodules/LBYouTubeView"]
 	path = YoutubeParser/Submodules/LBYouTubeView
 	url = https://github.com/MarcosSTM/LBYouTubeView.git
-[submodule "YoutubeParser/Submodules/AFNetworking"]
-	path = YoutubeParser/Submodules/AFNetworking
-	url = https://github.com/AFNetworking/AFNetworking.git

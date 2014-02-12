@@ -16,6 +16,9 @@
 #import "TMCache.h"
 #import "LBYouTubeExtractor.h"
 
+#import "AFNetworking.h"
+#import <AFNetworking/UIKit+AFNetworking.h>
+
 typedef void(^DrawRectBlock)(CGRect rect);
 
 typedef NS_ENUM(NSUInteger, kLocalTags) {
@@ -76,6 +79,8 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
 @property (nonatomic, strong) NSMutableArray *downloadedVideoPaths;
 
 @property (nonatomic, strong) UIDocumentInteractionController *dic;
+
+@property (nonatomic, strong) AFURLSessionManager *manager;
 
 @end
 
@@ -191,65 +196,63 @@ typedef NS_ENUM(NSUInteger, kLocalTags) {
 
 #pragma mark
 #pragma mark Downloading
+
 -(void)startDownload {
     // reset the pasteboard
     [[UIPasteboard generalPasteboard] setValue:@"" forPasteboardType:UIPasteboardNameGeneral];
-    NSURL *url = _urlToLoad;
-    NSURLRequest *theRequest = [NSURLRequest requestWithURL:url
-                                                cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
-                                            timeoutInterval:60];
-    receivedData = [[NSMutableData alloc] initWithLength:0];
-    NSURLConnection * connection = [[NSURLConnection alloc] initWithRequest:theRequest
-                                                                   delegate:self
-                                                           startImmediately:YES];
-    NSLog(@"Connection started immediately: %@", connection);
-}
-
-
-- (void) connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    progress.hidden = NO;
-    [receivedData setLength:0];
-    expectedBytes = [response expectedContentLength];
-}
-
-- (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    [receivedData appendData:data];
-    float progressive = (float)[receivedData length] / (float)expectedBytes;
-    [progress setProgress:progressive];
-}
-
-- (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    progress.hidden = YES;
-}
-
-- (NSCachedURLResponse *) connection:(NSURLConnection *)connection willCacheResponse:    (NSCachedURLResponse *)cachedResponse {
-    return nil;
-}
-
-- (void) connectionDidFinishLoading:(NSURLConnection *)connection {
+    
+    if (!_urlToLoad) return;
+    NSURLRequest *request = [NSURLRequest requestWithURL:_urlToLoad];
+    
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSDateFormatter *df = [[NSDateFormatter alloc] init];
     [df setDateFormat:@"yyyy-MM-dd 'at' HH:mm"];
     NSString *videoDirectory = [documentsDirectory stringByAppendingPathComponent:@"Downloaded Videos"];
     NSString *path = [videoDirectory stringByAppendingPathComponent:[[df stringFromDate:[NSDate date]] stringByAppendingString:@".mp4"]];
-    NSLog(@"Writing to path %@", path);
-    NSLog(@"Succeeded! Received %d bytes of data",[receivedData length]);
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    BOOL written = [receivedData writeToFile:path atomically:YES];
-    if (!written) {
-        NSLog(@"Couldn't write data to path %@", path);
-    }
-    progress.hidden = YES;
     
-    // on top
-    [self.downloadedVideoPaths insertObject:path.lastPathComponent atIndex:0];
-    [self.tableView reloadData];
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    self.manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
     
-    _urlToLoad = [NSURL fileURLWithPath:path];
+    NSProgress *progressObj;
+    NSURLSessionDownloadTask *downloadTask = [self.manager downloadTaskWithRequest:request progress:&progressObj destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+        NSURL *documentsDirectoryPath = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject]];
+        return [documentsDirectoryPath URLByAppendingPathComponent:[response suggestedFilename]];
+    } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+        
+        if (!error) {
+            
+            [[NSFileManager defaultManager] moveItemAtURL:filePath toURL:[NSURL fileURLWithPath:path] error:&error];
+            
+            if (error) {
+                NSLog(@"Could not move file at path %@ to path %@", filePath, path);
+                NSLog(@"Error: %@", error.localizedDescription);
+            }
+            else {
+                // on top
+                [self.downloadedVideoPaths insertObject:path.lastPathComponent atIndex:0];
+                [self.tableView reloadData];
+                
+                _urlToLoad = [NSURL fileURLWithPath:path];
+                NSLog(@"File downloaded to: %@", filePath);
+            }
+            
+            progress.hidden = YES;
+            
+            
+        }
+        else {
+            NSLog(@"Error: %@", error.localizedDescription);
+        }
+    }];
+    
+    progress.progress = 0.0f;
+    progress.hidden = NO;
+    
+    [progress setProgressWithDownloadProgressOfTask:downloadTask animated:YES];
+    [downloadTask resume];
 }
+
 
 #pragma mark
 #pragma mark Youtube
